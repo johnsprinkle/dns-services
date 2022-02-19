@@ -1,0 +1,46 @@
+name: Package
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 1 * * 6' # Every Saturday at 1am
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: latest
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Task
+        uses: arduino/setup-task@v1
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.0'
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test
+        run: task test
+      - name: Package
+        run: task package
+      - name: Upload
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: dns-services.tar.gz
+          path: dns-services.tar.gz
+
+#      - name: Docker push
+#        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+#        run: task release -- ${{ github.run_id }}.${{ github.run_attempt }}
+

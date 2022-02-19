@@ -1,0 +1,50 @@
+version: '3'
+
+env:
+  DOCKER_REPOSITORY: johnsprinkle
+  DOCKER_IMAGE_NAME: unbound
+  DOCKER_CONTAINER_NAME: unbound
+  UNBOUND_PORT: 5053
+  UNBOUND_HOST_PORT: 5053
+  ALLOWED_SUBNET: "172.17.0.0\\/16" #Escaped '/' for sed to do a replacement
+
+tasks:
+  install-go:
+    cmds:
+      - brew install go
+      - brew install golangci-lint
+
+  format:
+    cmds:
+      - go mod tidy
+      - go fmt ./...
+
+  lint:
+    cmds:
+      - golangci-lint run
+
+  test:
+    cmds:
+      - docker-compose -p dns-ci -f docker-compose.yml -f docker-compose.ports.ci.yml up -d
+      - go clean -testcache
+      - cmd: go test -v ./...
+        ignore_error: true
+      - docker-compose -p dns-ci down
+
+  package:
+    cmds:
+      - tar -czvf dns-services.tar.gz start.sh stop.sh docker-compose.yml docker-compose.ports.yml
+
+#  release:
+#    cmds:
+#      - GITHUB_BUILD_ID={{.CLI_ARGS}} && docker tag $DOCKER_IMAGE_NAME $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:${GITHUB_BUILD_ID:-dev}
+#      - GITHUB_BUILD_ID={{.CLI_ARGS}} && docker push $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:${GITHUB_BUILD_ID:-dev}
+#      - docker tag $DOCKER_IMAGE_NAME $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:latest
+#      - docker push $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:latest
+
+  pre:
+    cmds:
+      - task: format
+      - task: lint
+      - task: test
+      - task: package
