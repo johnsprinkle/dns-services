@@ -1,7 +1,7 @@
 # dns-services
 
 ### About
-#### This is a simple [Docker Compose](https://docs.docker.com/compose/) project that starts up an add-blocking, recursive, caching DNS resolution solution.  It leverages [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) and [Pi-hole](https://pi-hole.net/).
+#### This is a simple [Docker Compose](https://docs.docker.com/compose/) project that starts up an ad-blocking, recursive, caching DNS resolution solution.  It leverages [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) and [Pi-hole](https://pi-hole.net/).
 
 ### Quick Start
 
