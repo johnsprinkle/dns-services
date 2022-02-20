@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/dependabot-dockerfiles"
+    schedule:
+      interval: "daily"
+      time: "20:38"
+      timezone: "America/New_York"
+    target-branch: "dependabot"

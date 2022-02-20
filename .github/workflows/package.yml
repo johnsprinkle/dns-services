@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Test
-        run: task test
+        run: task start test stop
       - name: Package
         run: task package
       - name: Upload
