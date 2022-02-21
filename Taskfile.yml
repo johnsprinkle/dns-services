@@ -26,7 +26,10 @@ tasks:
 
   start:
     cmds:
-      - docker-compose -p dns-ci -f docker-compose.yml -f docker-compose.ports.ci.yml up -d
+      - |
+        UNBOUND_IMAGE=$(cat dependabot-dockerfiles/unbound/Dockerfile | cut -d ' ' -f 2) \
+        PIHOLE_IMAGE=$(cat dependabot-dockerfiles/pihole/Dockerfile | cut -d ' ' -f 2) \
+        docker-compose -p dns-ci -f docker-compose.yml -f docker-compose.ports.ci.yml up -d
 
   stop:
     cmds:
@@ -39,7 +42,7 @@ tasks:
 
   package:
     cmds:
-      - tar -czvf dns-services.tar.gz start.sh stop.sh docker-compose.yml docker-compose.ports.yml
+      - tar -czvf dns-services.tar.gz start.sh stop.sh docker-compose.yml docker-compose.ports.yml dependabot-dockerfiles
 
 #  release:
 #    cmds:
@@ -52,5 +55,7 @@ tasks:
     cmds:
       - task: format
       - task: lint
+      - task: start
       - task: test
+      - task: stop
       - task: package
