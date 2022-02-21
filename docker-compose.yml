@@ -16,7 +16,7 @@ services:
         reservations:
           memory: 64M
   pihole:
-    image: pihole/pihole:2022.02.1
+    image: pihole/pihole:2022.01.1
     depends_on:
       unbound:
         condition: service_started
