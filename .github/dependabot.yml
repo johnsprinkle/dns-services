@@ -1,9 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: "docker"
-    directory: "/dependabot-dockerfiles"
+    directory: "/dependabot-dockerfiles/pihole"
     schedule:
-      interval: "daily"
-      time: "20:38"
+      interval: "weekly"
       timezone: "America/New_York"
-    target-branch: "dependabot"
+  - package-ecosystem: "docker"
+    directory: "/dependabot-dockerfiles/unbound"
+    schedule:
+      interval: "weekly"
+      timezone: "America/New_York"
