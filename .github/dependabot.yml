@@ -10,3 +10,8 @@ updates:
     schedule:
       interval: "weekly"
       timezone: "America/New_York"
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      timezone: "America/New_York"
