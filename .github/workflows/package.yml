@@ -37,8 +37,3 @@ jobs:
         with:
           name: dns-services.tar.gz
           path: dns-services.tar.gz
-
-#      - name: Docker push
-#        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-#        run: task release -- ${{ github.run_id }}.${{ github.run_attempt }}
-
