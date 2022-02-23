@@ -19,7 +19,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.actor != 'dependabot[bot]') || (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]')}}
+    if: ${{ (github.event_name == 'push' && github.actor != 'dependabot[bot]') || (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')}}
     steps:
       - name: Install Task
         uses: arduino/setup-task@v1
