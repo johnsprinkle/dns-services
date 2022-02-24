@@ -43,9 +43,9 @@ jobs:
         with:
           name: dns-services.tar.gz
           path: dns-services.tar.gz
-      - name: Release
+      - name: Update 'latest' release
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: gh release create latest dns-services.tar.gz
+        run: h release upload latest --clobber dns-services.tar.gz
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
