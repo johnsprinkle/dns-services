@@ -43,6 +43,12 @@ jobs:
         with:
           name: dns-services.tar.gz
           path: dns-services.tar.gz
+      - name: Release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: gh release create latest dns-services.tar.gz
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   bump-dependencies:
     runs-on: ubuntu-latest
@@ -57,17 +63,6 @@ jobs:
       - name: Enable auto-merge for Dependabot PRs
         if: ${{contains(steps.metadata.outputs.dependency-names, 'pihole/pihole') || contains(steps.metadata.outputs.dependency-names, 'johnsprinkle/unbound')}}
         run: gh pr merge --auto --merge "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-  tag-on-main-merge:
-    runs-on: ubuntu-latest
-    needs: [ lint, build ]
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Enable auto-merge for Dependabot PRs
-        run: gh release create latest dns-services.tar.gz
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
