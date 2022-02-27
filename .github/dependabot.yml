@@ -4,13 +4,13 @@ updates:
     directory: "/dependabot-dockerfiles/pihole"
     schedule:
       interval: "daily"
-      time: "23:00"
+      time: "22:00"
       timezone: "America/New_York"
   - package-ecosystem: "docker"
     directory: "/dependabot-dockerfiles/unbound"
     schedule:
       interval: "daily"
-      time: "23:00"
+      time: "22:30"
       timezone: "America/New_York"
   - package-ecosystem: "gomod"
     directory: "/"
