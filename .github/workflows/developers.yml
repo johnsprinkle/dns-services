@@ -1,0 +1,46 @@
+name: CI Processes
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: latest
+
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Install Task
+        uses: arduino/setup-task@v1
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.0'
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test
+        run: task start test stop
+      - name: Package
+        run: task package
+      - name: Upload
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: dns-services.tar.gz
+          path: dns-services.tar.gz
+      - name: Update 'latest' release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: gh release upload latest --clobber dns-services.tar.gz
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
