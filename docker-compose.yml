@@ -3,11 +3,6 @@ version: "3.9"
 services:
   unbound:
     image: ${UNBOUND_IMAGE}
-    environment:
-      ALLOWED_SUBNET: 172.20.0.0\/16
-    networks:
-      nas_net:
-        ipv4_address: 172.20.0.2
     restart: unless-stopped
     deploy:
       resources:
@@ -22,12 +17,8 @@ services:
         condition: service_started
     environment:
       TZ: America/New_York
-      PIHOLE_DNS_: 172.20.0.2#5053
       DNSSEC: "true"
-      DNSMASQ_LISTENING: all
-    networks:
-      nas_net:
-        ipv4_address: 172.20.0.3
+      WEB_PORT: "62080"
     restart: unless-stopped
     deploy:
       resources:
@@ -37,10 +28,3 @@ services:
           memory: 128M
     # Query rate limit not configurable via env vars yet
     entrypoint: ["/bin/bash", "-c", "echo RATE_LIMIT=0/0 >> /etc/pihole/pihole-FTL.conf && /s6-init"]
-
-networks:
-  nas_net:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.20.0.0/24

@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  unbound:
+    networks:
+      pihole_net:
+        ipv4_address: 172.20.0.2
+    environment:
+      ALLOWED_SUBNET: 172.20.0.0\/16
+  pihole:
+    ports:
+      - "${PIHOLE_HOST_PORT}:53/tcp"
+      - "${PIHOLE_HOST_PORT}:53/udp"
+      - "62080:62080/tcp"
+    networks:
+      pihole_net:
+        ipv4_address: 172.20.0.3
+    environment:
+      DNSMASQ_LISTENING: all
+      PIHOLE_DNS_: 172.20.0.2#5053
+
+networks:
+  pihole_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24

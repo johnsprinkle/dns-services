@@ -4,10 +4,7 @@ env:
   DOCKER_REPOSITORY: johnsprinkle
   DOCKER_IMAGE_NAME: unbound
   DOCKER_CONTAINER_NAME: unbound
-  UNBOUND_PORT: 5053
-  UNBOUND_HOST_PORT: 5053
-  PIHOLE_HOST_PORT: 5053
-  ALLOWED_SUBNET: "172.17.0.0\\/16" #Escaped '/' for sed to do a replacement
+  ALLOWED_SUBNET: "172.20.0.0\\/16" #Escaped '/' for sed to do a replacement
 
 tasks:
   install-go:
@@ -23,13 +20,18 @@ tasks:
   lint:
     cmds:
       - golangci-lint run
+  default:
+    deps:
+      - task: echo_sth
+        vars: {TEXT: "before 1"}
 
   start:
     cmds:
       - |
         UNBOUND_IMAGE=$(cat dependabot-dockerfiles/unbound/Dockerfile | cut -d ' ' -f 2) \
         PIHOLE_IMAGE=$(cat dependabot-dockerfiles/pihole/Dockerfile | cut -d ' ' -f 2) \
-        docker-compose -p dns-ci -f docker-compose.yml -f docker-compose.ports.ci.yml up -d
+        PIHOLE_HOST_PORT=${PIHOLE_HOST_PORT:-5553} \
+        docker-compose -p dns-ci -f docker-compose.yml -f docker-compose.bridge-networking.yml up -d 
 
   stop:
     cmds:
@@ -38,18 +40,11 @@ tasks:
   test:
     cmds:
       - go clean -testcache
-      - go test -v ./...
+      - export PIHOLE_HOST_PORT=${PIHOLE_HOST_PORT:-5553} && go test -v ./...
 
   package:
     cmds:
-      - tar -czvf dns-services.tar.gz start.sh stop.sh docker-compose.yml docker-compose.ports.yml dependabot-dockerfiles
-
-#  release:
-#    cmds:
-#      - GITHUB_BUILD_ID={{.CLI_ARGS}} && docker tag $DOCKER_IMAGE_NAME $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:${GITHUB_BUILD_ID:-dev}
-#      - GITHUB_BUILD_ID={{.CLI_ARGS}} && docker push $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:${GITHUB_BUILD_ID:-dev}
-#      - docker tag $DOCKER_IMAGE_NAME $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:latest
-#      - docker push $DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:latest
+      - tar -czvf dns-services.tar.gz *.sh docker-compose*.yml dependabot-dockerfiles
 
   pre:
     cmds:
