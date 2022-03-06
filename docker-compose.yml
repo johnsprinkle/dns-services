@@ -27,4 +27,4 @@ services:
         reservations:
           memory: 128M
     # Query rate limit not configurable via env vars yet
-    entrypoint: ["/bin/bash", "-c", "echo RATE_LIMIT=0/0 >> /etc/pihole/pihole-FTL.conf && /s6-init"]
+    entrypoint: ["/bin/bash", "-c", "echo RATE_LIMIT=1500/60 >> /etc/pihole/pihole-FTL.conf && /s6-init"]
