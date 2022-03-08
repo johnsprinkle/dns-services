@@ -17,7 +17,7 @@ services:
         condition: service_started
     environment:
       TZ: America/New_York
-      DNSSEC: "true"
+      DNSSEC: "false"
       WEB_PORT: "62080"
     restart: unless-stopped
     deploy:
