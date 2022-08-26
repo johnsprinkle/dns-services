@@ -1,1 +1,1 @@
-FROM pihole/pihole:2022.07.1
+FROM pihole/pihole:2022.08.2
